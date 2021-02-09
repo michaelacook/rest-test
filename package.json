@@ -19,5 +19,9 @@
     "pg-hstore": "^2.3.3",
     "sequelize": "^6.5.0",
     "sequelize-cli": "^6.2.0"
+  },
+  "engines": {
+    "node": "14.0.0",
+    "npm": "7.5.2"
   }
 }
