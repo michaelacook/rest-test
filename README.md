@@ -8,7 +8,7 @@ In development, the client runs on port 3000, and the API on port 5000. In produ
 
 To get started run:
 
-- `$ git clone [url]` and `cd` into the project root
+- `$ git clone https://github.com/michaelacook/rest-test.git` and `cd` into the project root
 - `$ npm install`
 
 To serve the client from the API, run `$ NODE_ENV=production nodemon`.
