@@ -9,14 +9,29 @@ function App() {
   const [activeTab, setActiveTab] = useState(-1)
 
   useEffect(() => {
-    setActiveRequest(requests[activeTab])
-  }, [activeTab])
+    setActiveRequest(activeTab > -1 ? requests[activeTab] : null)
+    if (requests.length === 1) {
+      setActiveTab(0)
+    }
+  }, [activeTab, requests])
 
   function addRequest() {
     const newRequest = new HTTPRequest()
     newRequest.index = activeTab + 1
     setRequests([...requests, newRequest])
     setActiveTab(activeTab + 1)
+  }
+
+  function deleteRequest(index) {
+    if (requests.length === 1) {
+      setRequests([])
+      setActiveTab(-1)
+      return
+    }
+    const newState = [...requests]
+    newState.splice(index, 1)
+    setRequests(newState)
+    setActiveTab(activeTab > -1 ? activeTab - 1 : -1)
   }
 
   return (
@@ -64,6 +79,7 @@ function App() {
               requests={requests}
               setRequests={setRequests}
               index={activeRequest.index}
+              deleteRequest={deleteRequest}
             />
           ) : null}
         </Grid.Column>

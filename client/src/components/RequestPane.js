@@ -11,7 +11,7 @@ const HTTPVerbDropdownOptions = [
   { key: "trace", text: "TRACE", value: "trace" },
 ]
 
-function RequestPane({ request, requests, setRequests, index }) {
+function RequestPane({ request, requests, setRequests, index, deleteRequest }) {
   const [location, setLocation] = useState(request.location)
   const [verb, setVerb] = useState(request.verb)
 
@@ -65,7 +65,7 @@ function RequestPane({ request, requests, setRequests, index }) {
             <Button color="linkedin">Send</Button>
           </Form.Field>
           <Form.Field>
-            <Button icon="trash" />
+            <Button onClick={() => deleteRequest(index)} icon="trash" />
           </Form.Field>
         </Form.Group>
       </Form>
