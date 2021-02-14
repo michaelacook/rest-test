@@ -82,7 +82,6 @@ function App() {
           }
           {activeRequest ? (
             <RequestView
-              style={{ overflow: "scroll" }}
               req={activeRequest}
               requests={requests}
               setRequests={setRequests}
