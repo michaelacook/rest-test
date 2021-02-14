@@ -7,53 +7,12 @@ import {
   Grid,
   Header,
   Input,
+  Menu,
   Message,
 } from "semantic-ui-react"
+import { theme, themeOptions } from "../theme"
+import { HTTPVerbDropdownOptions } from "../options"
 import JSONTree from "react-json-tree"
-
-const theme = {
-  scheme: "monokai",
-  author: "wimer hazenberg (http://www.monokai.nl)",
-  base00: "#272822",
-  base01: "#383830",
-  base02: "#49483e",
-  base03: "#75715e",
-  base04: "#a59f85",
-  base05: "#f8f8f2",
-  base06: "#f5f4f1",
-  base07: "#f9f8f5",
-  base08: "#f92672",
-  base09: "#fd971f",
-  base0A: "#f4bf75",
-  base0B: "#a6e22e",
-  base0C: "#a1efe4",
-  base0D: "#66d9ef",
-  base0E: "#ae81ff",
-  base0F: "#cc6633",
-}
-
-const themeOptions = [
-  {
-    key: "light",
-    text: "light",
-    value: true,
-  },
-  {
-    key: "dark",
-    text: "dark",
-    value: false,
-  },
-]
-
-const HTTPVerbDropdownOptions = [
-  { key: "get", text: "GET", value: "get" },
-  { key: "post", text: "POST", value: "post" },
-  { key: "put", text: "PUT", value: "put" },
-  { key: "path", text: "PATCH", value: "patch" },
-  { key: "delete", text: "DELETE", value: "delete" },
-  { key: "options", text: "OPTIONS", value: "options" },
-  { key: "trace", text: "TRACE", value: "trace" },
-]
 
 function RequestView({ req, requests, setRequests, index, deleteRequest }) {
   const [request, setRequest] = useState(req)
@@ -62,9 +21,10 @@ function RequestView({ req, requests, setRequests, index, deleteRequest }) {
   const [response, setResponse] = useState(null)
   const [responseText, setResponseText] = useState("")
   const [responseColor, setResponseColor] = useState("")
-  const [lightTheme, setLightTheme] = useState(true)
+  const [darkTheme, setDarkTheme] = useState(true)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [requestMenuItem, setRequestMenuItem] = useState("params")
 
   useEffect(() => {
     setRequest(req)
@@ -162,9 +122,31 @@ function RequestView({ req, requests, setRequests, index, deleteRequest }) {
             <Button onClick={() => deleteRequest(index)} icon="trash" />
           </Form.Field>
         </Form.Group>
+        <Menu pointing secondary>
+          <Menu.Item
+            name="params"
+            active={requestMenuItem === "params"}
+            onClick={(e) => setRequestMenuItem("params")}
+          />
+          <Menu.Item
+            name="authorization"
+            active={requestMenuItem === "authorization"}
+            onClick={(e) => setRequestMenuItem("authorization")}
+          />
+          <Menu.Item
+            name="headers"
+            active={requestMenuItem === "headers"}
+            onClick={(e) => setRequestMenuItem("headers")}
+          />
+          <Menu.Item
+            name="body"
+            active={requestMenuItem === "body"}
+            onClick={(e) => setRequestMenuItem("body")}
+          />
+        </Menu>
       </Form>
-      <Divider style={{ marginTop: "55px", marginBottom: "5px" }} />
-      <Header style={{ marginTop: "0" }} as="h5" color="grey">
+      <Divider style={{ marginTop: "80px" }} />
+      <Header style={{ marginTop: "15px" }} as="h5" color="grey">
         Response
       </Header>
       {responseText ? (
@@ -188,7 +170,7 @@ function RequestView({ req, requests, setRequests, index, deleteRequest }) {
             <Grid.Column floated="right">
               <Dropdown
                 text="Theme"
-                onChange={(e, data) => setLightTheme(data.value)}
+                onChange={(e, data) => setDarkTheme(data.value)}
                 options={themeOptions}
               />
             </Grid.Column>
@@ -198,7 +180,7 @@ function RequestView({ req, requests, setRequests, index, deleteRequest }) {
               <JSONTree
                 data={responseText}
                 theme={theme}
-                invertTheme={lightTheme}
+                invertTheme={!darkTheme}
               />
             </Grid.Column>
           </Grid.Row>
