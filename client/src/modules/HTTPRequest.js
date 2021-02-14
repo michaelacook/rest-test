@@ -19,7 +19,9 @@ class HTTPRequest {
     authCredentials = null,
     credentials = "omit"
   ) {
+    this._error = null
     this._response = null
+    this._json = null
     this._authCredentials = authCredentials
     this._credentials = credentials
     this._abortController = new AbortController()
@@ -28,7 +30,7 @@ class HTTPRequest {
     this._mode = mode
     this._cache = cache
     this._title = "Untitled"
-    this._body = JSON.stringify(body)
+    this._body = body ? JSON.stringify(body) : body
     this._headers = new Headers()
     if (typeof headers === "string") {
       this._headers.append("Content-Type", headers)
@@ -112,11 +114,14 @@ class HTTPRequest {
    * Public
    * Call fetch passing location and options
    * Set response private property to parsed response object
+   * Set json private property to response.json()
    */
   async send() {
     const options = this._buildRequestOptions()
     const res = await fetch(this._location, options)
-    this._response = await res.json()
+    this._response = res
+    const json = await this._response.json()
+    this._json = json
   }
 
   /**
@@ -129,6 +134,14 @@ class HTTPRequest {
     this._abortController.abort()
     this._abortController = new AbortController()
     return "Request cancelled."
+  }
+
+  get json() {
+    return this._json
+  }
+
+  get response() {
+    return this._response
   }
 
   set title(title) {
@@ -264,6 +277,17 @@ class HTTPRequest {
       throw new Error("Credentials must be a string.")
     }
     this._credentials = credentials
+  }
+
+  set error(err) {
+    if (typeof err !== "string") {
+      throw new Error("Error must be a string description.")
+    }
+    this._error = err
+  }
+
+  get error() {
+    return this._error
   }
 }
 

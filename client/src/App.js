@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react"
 import { Button, Form, Grid, Icon, Menu, Tab } from "semantic-ui-react"
-import RequestPane from "./components/RequestPane"
+import RequestView from "./components/RequestView"
 import HTTPRequest from "./modules/HTTPRequest.js"
 
 function App() {
@@ -9,7 +9,7 @@ function App() {
   const [activeTab, setActiveTab] = useState(-1)
 
   useEffect(() => {
-    setActiveRequest(activeTab > -1 ? requests[activeTab] : null)
+    setActiveRequest(requests[activeTab])
     if (requests.length === 1) {
       setActiveTab(0)
     }
@@ -47,7 +47,7 @@ function App() {
           </Button>
         </Grid.Column>
       </Grid.Row>
-      <Grid.Row style={{ height: "94%" }}>
+      <Grid.Row style={{ height: "94%", overflowY: "scroll" }}>
         <Grid.Column width={2}>
           <Form>
             <Form.Input
@@ -58,24 +58,32 @@ function App() {
           </Form>
         </Grid.Column>
         <Grid.Column width={14}>
-          {requests.length ? (
+          {
             <Menu tabular>
-              {requests.map((request, i) => (
-                <Menu.Item
-                  key={i}
-                  name={request.title}
-                  active={i === activeTab}
-                  onClick={() => {
-                    setActiveTab(i)
-                    setActiveRequest(requests[i])
-                  }}
-                />
-              ))}
+              {requests.length
+                ? requests.map((request, i) => (
+                    <Menu.Item
+                      key={i}
+                      name={request.title}
+                      active={i === activeTab}
+                      onClick={() => {
+                        setActiveTab(i)
+                        setActiveRequest(requests[i])
+                      }}
+                    />
+                  ))
+                : null}
+              <Menu.Item
+                active={!requests.length}
+                icon="plus"
+                onClick={addRequest}
+              />
             </Menu>
-          ) : null}
+          }
           {activeRequest ? (
-            <RequestPane
-              request={activeRequest}
+            <RequestView
+              style={{ overflow: "scroll" }}
+              req={activeRequest}
               requests={requests}
               setRequests={setRequests}
               index={activeRequest.index}
