@@ -17,9 +17,8 @@ function App() {
 
   function addRequest() {
     const newRequest = new HTTPRequest()
-    newRequest.index = activeTab + 1
     setRequests([...requests, newRequest])
-    setActiveTab(activeTab + 1)
+    setActiveTab(requests.length)
   }
 
   function deleteRequest(index) {
@@ -85,7 +84,7 @@ function App() {
               req={activeRequest}
               requests={requests}
               setRequests={setRequests}
-              index={activeRequest.index}
+              index={requests.indexOf(activeRequest)}
               deleteRequest={deleteRequest}
             />
           ) : null}
