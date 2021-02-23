@@ -15,6 +15,8 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 
+const routes = require("./routes")
+
 if (process.env.NODE_ENV === "production") {
   app.use(express.static("public"))
   app.get("/", (req, res, next) => {
@@ -22,17 +24,20 @@ if (process.env.NODE_ENV === "production") {
   })
 }
 
+app.use(routes)
+
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404))
 })
 
-// error handler
+// global error handler
 app.use((err, req, res, next) => {
   if (process.env.NODE_ENV !== "production") {
     res.status(err.status || 500).json({
       message: err.message,
       stack: err.stack,
+      // message: "Bad Request",
     })
   } else {
     res.status(err.status || 500).json(err.message)
