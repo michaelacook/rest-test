@@ -5,6 +5,10 @@ export default function Body({ body, handleBodyChange }) {
   const [code, setCode] = useState(body || " ")
 
   useEffect(() => {
+    setCode(body)
+  }, [body])
+
+  useEffect(() => {
     handleBodyChange(code)
   }, [code])
 

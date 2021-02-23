@@ -20,7 +20,7 @@ function RequestView({ req, requests, setRequests, index, deleteRequest }) {
   const [request, setRequest] = useState(req)
   const [location, setLocation] = useState(req.location)
   const [verb, setVerb] = useState(req.verb.toLowerCase())
-  const [body, setBody] = useState("")
+  const [body, setBody] = useState(null)
   const [response, setResponse] = useState(null)
   const [responseText, setResponseText] = useState("")
   const [responseColor, setResponseColor] = useState("")
@@ -31,6 +31,8 @@ function RequestView({ req, requests, setRequests, index, deleteRequest }) {
 
   useEffect(() => {
     setRequest(req)
+    setRequestMenuItem(req.optionsTab || "params")
+    setBody(req.body)
   }, [req])
 
   useEffect(() => {
@@ -39,6 +41,7 @@ function RequestView({ req, requests, setRequests, index, deleteRequest }) {
     setResponse(request.response)
     setResponseText(request.json || "")
     setError(request.error || null)
+    setBody(request.body)
   }, [request])
 
   useEffect(() => {
@@ -57,6 +60,18 @@ function RequestView({ req, requests, setRequests, index, deleteRequest }) {
       }
     }
   }, [response])
+
+  /**
+   * Save open options tab
+   * Save options tab selection to request object, save request
+   * Persists options tab selection between tab change
+   * @param {String} value - options tab name
+   */
+  function handleChangeRequestOptionsTab(value) {
+    setRequestMenuItem(value)
+    request.optionsTab = value
+    saveRequest()
+  }
 
   /**
    * Save a new copy of the request object to state in App.js
@@ -84,7 +99,7 @@ function RequestView({ req, requests, setRequests, index, deleteRequest }) {
   /**
    * Handle change to URL location
    * Add to request and save
-   * @param {Object} 
+   * @param {Object}
    */
   function handleLocationChange({ value }) {
     setLocation(value)
@@ -93,9 +108,9 @@ function RequestView({ req, requests, setRequests, index, deleteRequest }) {
   }
 
   /**
-   * Handle change of HTTP verb 
+   * Handle change of HTTP verb
    * Add to request and save
-   * @param {Object} 
+   * @param {Object}
    */
   function handleVerbChange({ value }) {
     setVerb(value)
@@ -105,7 +120,7 @@ function RequestView({ req, requests, setRequests, index, deleteRequest }) {
 
   /**
    * Send the request
-   * Set response to request 
+   * Set response to request
    * Save request
    */
   async function sendRequest() {
@@ -161,22 +176,22 @@ function RequestView({ req, requests, setRequests, index, deleteRequest }) {
           <Menu.Item
             name="params"
             active={requestMenuItem === "params"}
-            onClick={(e) => setRequestMenuItem("params")}
+            onClick={(e) => handleChangeRequestOptionsTab("params")}
           />
           <Menu.Item
             name="authorization"
             active={requestMenuItem === "authorization"}
-            onClick={(e) => setRequestMenuItem("authorization")}
+            onClick={(e) => handleChangeRequestOptionsTab("authorization")}
           />
           <Menu.Item
             name="headers"
             active={requestMenuItem === "headers"}
-            onClick={(e) => setRequestMenuItem("headers")}
+            onClick={(e) => handleChangeRequestOptionsTab("headers")}
           />
           <Menu.Item
             name="body"
             active={requestMenuItem === "body"}
-            onClick={(e) => setRequestMenuItem("body")}
+            onClick={(e) => handleChangeRequestOptionsTab("body")}
           />
         </Menu>
         <Grid>
