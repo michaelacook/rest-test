@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react"
 import ReactPrismEditor from "react-prism-editor"
 
 export default function Body({ body, handleBodyChange }) {
-  const [code, setCode] = useState(body || " ")
+  const [code, setCode] = useState(body)
 
   useEffect(() => {
     setCode(body)
@@ -17,7 +17,7 @@ export default function Body({ body, handleBodyChange }) {
       style={{ border: "none" }}
       language="json"
       theme="tomorrow"
-      code={code}
+      code={code || " "}
       lineNumber={true}
       readOnly={false}
       clipboard={true}
