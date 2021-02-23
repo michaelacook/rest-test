@@ -20,7 +20,7 @@ function RequestView({ req, requests, setRequests, index, deleteRequest }) {
   const [request, setRequest] = useState(req)
   const [location, setLocation] = useState(req.location)
   const [verb, setVerb] = useState(req.verb.toLowerCase())
-  const [body, setBody] = useState(``)
+  const [body, setBody] = useState("")
   const [response, setResponse] = useState(null)
   const [responseText, setResponseText] = useState("")
   const [responseColor, setResponseColor] = useState("")
@@ -58,12 +58,20 @@ function RequestView({ req, requests, setRequests, index, deleteRequest }) {
     }
   }, [response])
 
+  /**
+   * Save a new copy of the request object to state in App.js
+   */
   function saveRequest() {
     const newState = [...requests]
     newState.splice(index, 1, request)
     setRequests(newState)
   }
 
+  /**
+   * Handle change of input from textarea for Body
+   * Add to request and save
+   * @param {String} value - user input for HTTP payload
+   */
   function handleBodyChange(value) {
     if (value) {
       value = value.replace(/\s+/g, "")
@@ -73,18 +81,33 @@ function RequestView({ req, requests, setRequests, index, deleteRequest }) {
     }
   }
 
+  /**
+   * Handle change to URL location
+   * Add to request and save
+   * @param {Object} 
+   */
   function handleLocationChange({ value }) {
     setLocation(value)
     request.location = value
     saveRequest()
   }
 
+  /**
+   * Handle change of HTTP verb 
+   * Add to request and save
+   * @param {Object} 
+   */
   function handleVerbChange({ value }) {
     setVerb(value)
     request.verb = value
     saveRequest()
   }
 
+  /**
+   * Send the request
+   * Set response to request 
+   * Save request
+   */
   async function sendRequest() {
     try {
       setError(null)
