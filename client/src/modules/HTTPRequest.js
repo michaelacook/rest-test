@@ -104,9 +104,12 @@ class HTTPRequest {
       credentials: this._credentials,
       // signal: this._abortController.signal,
     }
-    if (this._body) {
-      options["body"] = this._body
+    if (["post", "put"].includes(this._verb.toLowerCase())) {
+      if (this._body) {
+        options["body"] = this._body
+      }
     }
+
     return options
   }
 
@@ -247,10 +250,7 @@ class HTTPRequest {
   }
 
   setBody(body) {
-    if (typeof body !== "object") {
-      throw new Error("HTTP payload must be a JavaScript object or array")
-    }
-    this._body = JSON.stringify(body)
+    this._body = body
   }
 
   get rawBody() {

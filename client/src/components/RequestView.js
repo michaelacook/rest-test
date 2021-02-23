@@ -12,12 +12,15 @@ import {
 } from "semantic-ui-react"
 import { theme, themeOptions } from "../theme"
 import { HTTPVerbDropdownOptions } from "../options"
+import Headers from "./request-pane-options/Headers"
+import Body from "./request-pane-options/Body"
 import JSONTree from "react-json-tree"
 
 function RequestView({ req, requests, setRequests, index, deleteRequest }) {
   const [request, setRequest] = useState(req)
   const [location, setLocation] = useState(req.location)
   const [verb, setVerb] = useState(req.verb.toLowerCase())
+  const [body, setBody] = useState(``)
   const [response, setResponse] = useState(null)
   const [responseText, setResponseText] = useState("")
   const [responseColor, setResponseColor] = useState("")
@@ -59,6 +62,15 @@ function RequestView({ req, requests, setRequests, index, deleteRequest }) {
     const newState = [...requests]
     newState.splice(index, 1, request)
     setRequests(newState)
+  }
+
+  function handleBodyChange(value) {
+    if (value) {
+      value = value.replace(/\s+/g, "")
+      setBody(`${value}`)
+      request.setBody(value)
+      saveRequest()
+    }
   }
 
   function handleLocationChange({ value }) {
@@ -144,6 +156,17 @@ function RequestView({ req, requests, setRequests, index, deleteRequest }) {
             onClick={(e) => setRequestMenuItem("body")}
           />
         </Menu>
+        <Grid>
+          <Grid.Row>
+            <Grid.Column width="14">
+              {requestMenuItem === "headers" ? (
+                <Headers />
+              ) : requestMenuItem === "body" ? (
+                <Body body={body} handleBodyChange={handleBodyChange} />
+              ) : null}
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
       </Form>
       <Divider style={{ marginTop: "80px" }} />
       <Header style={{ marginTop: "15px" }} as="h5" color="grey">

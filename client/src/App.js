@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react"
-import { Button, Form, Grid, Icon, Menu, Tab } from "semantic-ui-react"
+import {
+  Button,
+  Form,
+  Grid,
+  GridColumn,
+  Icon,
+  Menu,
+  Tab,
+} from "semantic-ui-react"
 import RequestView from "./components/RequestView"
 import HTTPRequest from "./modules/HTTPRequest.js"
 
