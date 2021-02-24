@@ -35,7 +35,7 @@ function App() {
 
   return (
     <Grid celled padded style={{ height: "100vh" }}>
-      <Grid.Row color="black" style={{ height: "6%" }}>
+      <Grid.Row color="black" style={{ height: "55px" }}>
         <Grid.Column>
           <Button size="tiny" color="orange" onClick={addRequest}>
             <Icon name="plus" />
