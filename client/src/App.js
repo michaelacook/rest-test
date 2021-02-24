@@ -47,7 +47,7 @@ function App() {
         </Grid.Column>
       </Grid.Row>
       <Grid.Row style={{ height: "94%", overflowY: "scroll" }}>
-        <Grid.Column width={2}>
+        <Grid.Column tablet={3} computer={2} only="tablet computer">
           <Form>
             <Form.Input
               icon="search"
@@ -56,7 +56,7 @@ function App() {
             />
           </Form>
         </Grid.Column>
-        <Grid.Column width={14}>
+        <Grid.Column computer={14} tablet={13} mobile={16}>
           {
             <Menu tabular>
               {requests.length
