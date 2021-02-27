@@ -89,7 +89,7 @@ function RequestView({ req, requests, setRequests, index, deleteRequest }) {
    */
   function handleBodyChange(value) {
     if (value) {
-      value = value.replace(/\s+/g, "")
+      // value = value.replace(/\s+/g, "")
       setBody(`${value}`)
       request.setBody(value)
       saveRequest()
