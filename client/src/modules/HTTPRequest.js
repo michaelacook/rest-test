@@ -1,3 +1,11 @@
+/* 
+Though JavaScript contains a native Request object, the rationale for writing 
+my own here is that the built-in Request lacks flexibility--many of it's 
+properties are read-only. This application is designed to give the user a fair 
+bit of control and the ability to update request properties as they test their 
+endpoints
+*/
+
 class HTTPRequest {
   /**
    * @param {String} location - resource URI
@@ -31,14 +39,27 @@ class HTTPRequest {
     this._cache = cache
     this._title = "Untitled"
     this._body = body ? JSON.stringify(body) : body
-    this._headers = new Headers()
-    if (typeof headers === "string") {
-      this._headers.append("Content-Type", headers)
-    } else if (Array.isArray(headers)) {
-      headers.forEach((header) => {
-        this._headers.append("Content-Type", header)
-      })
+    this._headers = {
+      "Content-Type": headers,
     }
+  }
+
+  get headers() {
+    return this._headers
+  }
+
+  /**
+   * Add a header to _headers private property
+   * @param {String} key - header type e.g "Content-Type"
+   * @param {String} val - header
+   */
+  addHeader(key, val) {
+    if (typeof key !== "string" || typeof val !== "string") {
+      throw new Error("Header key and val must be string types.")
+    } else if (!key && !val) {
+      throw new Error("Header key and value must be passed.")
+    }
+    this._headers[key] = val
   }
 
   /**
@@ -53,7 +74,7 @@ class HTTPRequest {
     if (!this._headers) {
       throw new Error("Headers object does not exist.")
     }
-    this._headers.append("X-Custom-Header", header)
+    this._headers["X-Custom-Header"] = header
   }
 
   /**
@@ -83,7 +104,7 @@ class HTTPRequest {
     ) {
       throw new Error("Credentials object requires email and password keys.")
     }
-    this._headers.append("Authorization", this._buildBasicAuthHeader())
+    this._headers["Authorization"] = this._buildBasicAuthHeader()
   }
 
   /**
@@ -102,29 +123,14 @@ class HTTPRequest {
       cache: this._cache || "no-cache",
       headers: this._headers,
       credentials: this._credentials,
-      // signal: this._abortController.signal,
+      signal: this._abortController.signal,
     }
     if (["post", "put"].includes(this._verb.toLowerCase())) {
       if (this._body) {
         options["body"] = this._body
       }
     }
-
     return options
-  }
-
-  /**
-   * Public
-   * Call fetch passing location and options
-   * Set response private property to parsed response object
-   * Set json private property to response.json()
-   */
-  async send() {
-    const options = this._buildRequestOptions()
-    const res = await fetch(this._location, options)
-    this._response = res
-    const json = await this._response.json()
-    this._json = json
   }
 
   /**
@@ -155,9 +161,6 @@ class HTTPRequest {
     return this._title
   }
 
-  /**
-   * Validate location URI before setting location private property
-   */
   set location(location) {
     this._location = location
   }
@@ -189,40 +192,6 @@ class HTTPRequest {
 
   get verb() {
     return this._verb
-  }
-
-  /**
-   * Set headers private property
-   * @param {Array} headers - array of headers
-   */
-  set headers(headers) {
-    if (!headers.length) {
-      throw new Error("Setting headers property requires headers array.")
-    }
-    const hdrs = new Headers()
-    headers.forEach((header) => {
-      hdrs.append("Content-Type", header)
-    })
-    if (!this._authCredentials || !Object.keys(this._authCredentials).length) {
-      throw new Error(
-        "Setting Basic Auth credentials requires a credentials object with email and password keys."
-      )
-    } else if (
-      !this._authCredentials.email ||
-      !this._authCredentials.password
-    ) {
-      throw new Error("Credentials object requires email and password keys.")
-    }
-    hdrs.append(
-      "Authorization",
-      "Basic " +
-        btoa(`${this._authCredentials.email}:${this._authCredentials.password}`)
-    )
-    this._headers = hdrs
-  }
-
-  get headers() {
-    return this._headers
   }
 
   set authCredentials({ email, password }) {
@@ -288,6 +257,20 @@ class HTTPRequest {
 
   get error() {
     return this._error
+  }
+
+  /**
+   * Public
+   * Call fetch passing location and options
+   * Set response private property to parsed response object
+   * Set json private property to response.json()
+   */
+  async send() {
+    const options = this._buildRequestOptions()
+    const res = await fetch(this._location, options)
+    this._response = res
+    const json = await this._response.json()
+    this._json = json
   }
 }
 
