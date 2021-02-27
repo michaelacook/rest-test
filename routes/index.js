@@ -9,7 +9,10 @@ router.get("/", function (req, res, next) {
 })
 
 router.post("/", (req, res, next) => {
-  res.json(req.body)
+  res.json({
+    body: req.body,
+    query: req.query,
+  })
 })
 
 module.exports = router
