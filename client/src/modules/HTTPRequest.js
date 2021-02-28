@@ -20,7 +20,6 @@ class HTTPRequest {
   constructor(
     location = null,
     verb = "GET",
-    headers = "application/json; charset=utf-8",
     mode = "cors",
     cache = null,
     body = null,
@@ -40,7 +39,8 @@ class HTTPRequest {
     this._title = "Untitled"
     this._body = body ? JSON.stringify(body) : body
     this._headers = {
-      "Content-Type": headers,
+      "Content-Type": "application/json; charset=utf-8",
+      Connection: "keep-alive",
     }
   }
 
@@ -50,6 +50,7 @@ class HTTPRequest {
 
   /**
    * Add a header to _headers private property
+   * If the supplied key already exists, it will be overwritten
    * @param {String} key - header type e.g "Content-Type"
    * @param {String} val - header
    */

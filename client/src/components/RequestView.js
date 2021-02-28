@@ -19,6 +19,7 @@ import JSONTree from "react-json-tree"
 function RequestView({ req, requests, setRequests, index, deleteRequest }) {
   const [request, setRequest] = useState(req)
   const [location, setLocation] = useState(req.location)
+  const [headers, setHeaders] = useState(req.headers)
   const [verb, setVerb] = useState(req.verb.toLowerCase())
   const [body, setBody] = useState(null)
   const [response, setResponse] = useState(null)
@@ -33,6 +34,7 @@ function RequestView({ req, requests, setRequests, index, deleteRequest }) {
     setRequest(req)
     setRequestMenuItem(req.optionsTab || "params")
     setBody(req.body)
+    setHeaders(req.headers)
   }, [req])
 
   useEffect(() => {
@@ -42,6 +44,7 @@ function RequestView({ req, requests, setRequests, index, deleteRequest }) {
     setResponseText(request.json || "")
     setError(request.error || null)
     setBody(request.body)
+    setHeaders(request.headers)
   }, [request])
 
   useEffect(() => {
@@ -89,11 +92,22 @@ function RequestView({ req, requests, setRequests, index, deleteRequest }) {
    */
   function handleBodyChange(value) {
     if (value) {
-      // value = value.replace(/\s+/g, "")
       setBody(`${value}`)
       request.setBody(value)
       saveRequest()
     }
+  }
+
+  /**
+   * Add or update a header on the request in state
+   * @param {String} key
+   * @param {String} val
+   */
+  function handleHeadersChange(key, val) {
+    request.addHeader(key, val)
+    setRequest(request)
+    saveRequest()
+    // maybe this needs to be directly updating state as well
   }
 
   /**
@@ -198,7 +212,10 @@ function RequestView({ req, requests, setRequests, index, deleteRequest }) {
           <Grid.Row>
             <Grid.Column width="14">
               {requestMenuItem === "headers" ? (
-                <Headers />
+                <Headers
+                  headers={headers}
+                  handleHeadersChange={handleHeadersChange}
+                />
               ) : requestMenuItem === "body" ? (
                 <Body body={body} handleBodyChange={handleBodyChange} />
               ) : null}
