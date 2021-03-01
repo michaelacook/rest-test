@@ -107,7 +107,16 @@ function RequestView({ req, requests, setRequests, index, deleteRequest }) {
     request.addHeader(key, val)
     setRequest(request)
     saveRequest()
-    // maybe this needs to be directly updating state as well
+  }
+
+  /**
+   * Handle deleting a header and saving request to state
+   * @param {String} key - header name
+   */
+  function handleDeleteHeader(key) {
+    request.deleteHeader(key)
+    setRequest(request)
+    saveRequest()
   }
 
   /**
@@ -215,6 +224,7 @@ function RequestView({ req, requests, setRequests, index, deleteRequest }) {
                 <Headers
                   headers={headers}
                   handleHeadersChange={handleHeadersChange}
+                  handleDeleteHeader={handleDeleteHeader}
                 />
               ) : requestMenuItem === "body" ? (
                 <Body body={body} handleBodyChange={handleBodyChange} />

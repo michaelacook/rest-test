@@ -64,6 +64,14 @@ class HTTPRequest {
   }
 
   /**
+   * Delete a header from the headers private property
+   * @param {String} key - header name
+   */
+  deleteHeader(key) {
+    delete this._headers[key]
+  }
+
+  /**
    * Public
    * Append a custom header to headers private property
    * @param {String} header - custom header text
