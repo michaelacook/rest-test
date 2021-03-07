@@ -102,6 +102,15 @@ function RequestView({ req, requests, setRequests, index, deleteRequest }) {
   }
 
   /**
+   * Remove auth credentials from request and save to state
+   */
+  function deleteAuthCredentials() {
+    setAuthCredentials(null)
+    request.deleteAuthCredentials()
+    saveRequest()
+  }
+
+  /**
    * Handle change of input from textarea for Body
    * Add to request and save
    * @param {String} value - user input for HTTP payload
@@ -270,6 +279,7 @@ function RequestView({ req, requests, setRequests, index, deleteRequest }) {
                 <Authorization
                   authCredentials={authCredentials}
                   handleAuthCredentialsChange={handleAuthCredentialsChange}
+                  deleteAuthCredentials={deleteAuthCredentials}
                 />
               ) : null}
             </Grid.Column>

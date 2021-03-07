@@ -212,6 +212,10 @@ class HTTPRequest {
     this._authCredentials = { email, password }
   }
 
+  deleteAuthCredentials() {
+    this._authCredentials = null
+  }
+
   get authCredentials() {
     return `email: ${this._authCredentials.email}, password: ${this._authCredentials.password}`
   }

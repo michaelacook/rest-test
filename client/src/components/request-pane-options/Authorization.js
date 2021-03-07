@@ -24,6 +24,7 @@ const dropDownOptions = [
 export default function Authorization({
   authCredentials,
   handleAuthCredentialsChange,
+  deleteAuthCredentials,
 }) {
   const [showPass, setShowPass] = useState(false)
   const [authType, setAuthType] = useState("none")
@@ -54,6 +55,14 @@ export default function Authorization({
     }
   }, [username, password])
 
+  function handleChangeAuthTypeDropdown({ value }) {
+    if (value === "none") {
+      deleteAuthCredentials()
+    } else {
+      setAuthType(value)
+    }
+  }
+
   return (
     <Grid>
       <Grid.Row>
@@ -64,7 +73,7 @@ export default function Authorization({
             selection
             options={dropDownOptions}
             value={authType || "none"}
-            onChange={(e, data) => setAuthType(data.value)}
+            onChange={(e, data) => handleChangeAuthTypeDropdown(data)}
           />
         </Grid.Column>
         <Divider vertical />
