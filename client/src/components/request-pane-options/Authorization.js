@@ -58,6 +58,7 @@ export default function Authorization({
   function handleChangeAuthTypeDropdown({ value }) {
     if (value === "none") {
       deleteAuthCredentials()
+      setAuthType("none")
     } else {
       setAuthType(value)
     }
