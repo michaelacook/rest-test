@@ -216,6 +216,10 @@ class HTTPRequest {
     return `email: ${this._authCredentials.email}, password: ${this._authCredentials.password}`
   }
 
+  get authCredentialsObj() {
+    return this._authCredentials
+  }
+
   set cache(cache) {
     if (typeof cache !== "string") {
       throw new Error("Cache must be a string.")

@@ -9,11 +9,13 @@ import {
   Input,
   Menu,
   Message,
+  Popup,
 } from "semantic-ui-react"
 import { theme, themeOptions } from "../theme"
 import { HTTPVerbDropdownOptions } from "../options"
 import Headers from "./request-pane-options/Headers"
 import Body from "./request-pane-options/Body"
+import Authorization from "./request-pane-options/Authorization"
 import JSONTree from "react-json-tree"
 
 function RequestView({ req, requests, setRequests, index, deleteRequest }) {
@@ -25,16 +27,18 @@ function RequestView({ req, requests, setRequests, index, deleteRequest }) {
   const [response, setResponse] = useState(null)
   const [responseText, setResponseText] = useState("")
   const [responseColor, setResponseColor] = useState("")
+  const [authCredentials, setAuthCredentials] = useState(null)
   const [darkTheme, setDarkTheme] = useState(true)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  const [requestMenuItem, setRequestMenuItem] = useState("params")
+  const [requestMenuItem, setRequestMenuItem] = useState("authorization")
 
   useEffect(() => {
     setRequest(req)
-    setRequestMenuItem(req.optionsTab || "params")
+    setRequestMenuItem(req.optionsTab || "authorization")
     setBody(req.body)
     setHeaders(req.headers)
+    setAuthCredentials(req.authCredentialsObj)
   }, [req])
 
   useEffect(() => {
@@ -45,6 +49,7 @@ function RequestView({ req, requests, setRequests, index, deleteRequest }) {
     setError(request.error || null)
     setBody(request.body)
     setHeaders(request.headers)
+    setAuthCredentials(request.authCredentialsObj)
   }, [request])
 
   useEffect(() => {
@@ -83,6 +88,17 @@ function RequestView({ req, requests, setRequests, index, deleteRequest }) {
     const newState = [...requests]
     newState.splice(index, 1, request)
     setRequests(newState)
+  }
+
+  /**
+   * Set basic auth credentials on the request object, save to state
+   * @param {String} email
+   * @param {String} password
+   */
+  function handleAuthCredentialsChange(email, password) {
+    setAuthCredentials({ email, password })
+    request.authCredentials = { email, password }
+    saveRequest()
   }
 
   /**
@@ -170,11 +186,12 @@ function RequestView({ req, requests, setRequests, index, deleteRequest }) {
       </Header>
       <Form>
         <Form.Group inline>
-          <Form.Field width={13}>
+          <Form.Field width={14}>
             <Input
               fluid
               onChange={(e) => handleLocationChange(e.target)}
               value={location || ""}
+              size="small"
               label={
                 <Dropdown
                   value={verb}
@@ -182,25 +199,46 @@ function RequestView({ req, requests, setRequests, index, deleteRequest }) {
                   onChange={(e, data) => handleVerbChange(data)}
                 />
               }
+              action={{
+                color: "linkedin",
+                labelPosition: "right",
+                icon: "send",
+                content: "Send",
+                onClick: sendRequest,
+                loading: loading,
+              }}
               labelPosition="left"
               placeholder="Enter request URL"
             />
           </Form.Field>
+        </Form.Group>
+        <Form.Group>
           <Form.Field>
-            <Button loading={loading} onClick={sendRequest} color="linkedin">
-              Send
-            </Button>
-          </Form.Field>
-          <Form.Field>
-            <Button onClick={() => deleteRequest(index)} icon="trash" />
+            <Popup
+              content="Close tab"
+              trigger={
+                <Button
+                  circular
+                  onClick={() => deleteRequest(index)}
+                  icon="close"
+                />
+              }
+            />
+            <Popup
+              content="Save"
+              trigger={
+                <Button style={{ marginLeft: "3px" }} circular icon="save" />
+              }
+            />
+            <Popup
+              content="Delete request"
+              trigger={
+                <Button style={{ marginLeft: "3px" }} circular icon="trash" />
+              }
+            />
           </Form.Field>
         </Form.Group>
         <Menu pointing secondary>
-          <Menu.Item
-            name="params"
-            active={requestMenuItem === "params"}
-            onClick={(e) => handleChangeRequestOptionsTab("params")}
-          />
           <Menu.Item
             name="authorization"
             active={requestMenuItem === "authorization"}
@@ -228,12 +266,17 @@ function RequestView({ req, requests, setRequests, index, deleteRequest }) {
                 />
               ) : requestMenuItem === "body" ? (
                 <Body body={body} handleBodyChange={handleBodyChange} />
+              ) : requestMenuItem === "authorization" ? (
+                <Authorization
+                  authCredentials={authCredentials}
+                  handleAuthCredentialsChange={handleAuthCredentialsChange}
+                />
               ) : null}
             </Grid.Column>
           </Grid.Row>
         </Grid>
       </Form>
-      <Divider style={{ marginTop: "80px" }} />
+      <Divider style={{ marginTop: "25px" }} />
       <Header style={{ marginTop: "15px" }} as="h5" color="grey">
         Response
       </Header>
